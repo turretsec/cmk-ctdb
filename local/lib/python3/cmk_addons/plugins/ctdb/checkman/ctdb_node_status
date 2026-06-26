@@ -1,0 +1,38 @@
+title: CTDB Cluster Health
+agents: linux
+catalog: app/ctdb
+license: GPLv2
+distribution: custom
+
+description:
+ Monitors this node's CTDB-reported health and the cluster's recovery mode,
+ via the {ctdb_status.py} agent plugin running {ctdb status} locally.
+
+ Node health is distinct from whether the {ctdbd} process is merely
+ running. CTDB tracks PARTIALLYONLINE, DISABLED, STOPPED, UNHEALTHY,
+ DISCONNECTED and BANNED states beyond simple process presence, all of
+ which are configurable to OK/WARN/CRIT/UNKNOWN independently.
+
+ Recovery mode (NORMAL vs RECOVERY) is cluster-wide, not per-node. A brief
+ RECOVERY during normal failover is expected and reported as WARN; if it
+ hasn't cleared within a configurable grace period (default 30s) severity
+ escalates to the configured stuck-recovery state (default CRIT).
+
+ Deploy the agent plugin identically to every node in the cluster - both
+ {ctdb status} and {ctdb ip all} return a cluster-wide view regardless of
+ which node you ask, so running this on every node is intentional
+ redundancy. If one node's agent goes dark, the
+ others still carry the full cluster picture.
+
+ Tracks time spent in RECOVERY mode as the {ctdb_recovery_elapsed} metric,
+ useful for noticing if recoveries are trending longer over time even
+ when each individual one clears within the grace period.
+
+item:
+ None. One service per host.
+
+discovery:
+ One service is discovered per host once the agent plugin reports any
+ node or recovery mode data. If the agent plugin reports an error (ctdb
+ not installed, not running, or permission denied), no service is
+ discovered until the underlying problem is fixed.

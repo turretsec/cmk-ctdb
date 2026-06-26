@@ -1,0 +1,28 @@
+title: CTDB Public IP Allocation
+agents: linux
+catalog: app/ctdb
+license: GPLv2
+distribution: custom
+
+description:
+ Monitors the cluster-wide allocation of CTDB public service IPs, via the
+ {ctdb_status.py} agent plugin running {ctdb ip all} locally.
+
+ Reports any public IP with no owning node right now. A live outage at
+ that address regardless of how healthy the rest of the cluster looks. It
+ flags uneven distribution, e.g. all public IPs ending up on one node
+ after a string of failovers. An imbalanced cluster still serves traffic
+ fine but has lost its failover headroom.
+
+ Deploy the agent plugin identically to every node in the cluster.
+ {ctdb ip all} returns the same cluster-wide map regardless of which node
+ you ask, so running this on every node is intentional redundancy.
+
+item:
+ None. One service per host.
+
+discovery:
+ One service is discovered per host once the agent plugin reports at
+ least one public IP. If the agent plugin reports an error (ctdb not
+ installed, not running, or permission denied), no service is discovered
+ until the underlying problem is fixed.
