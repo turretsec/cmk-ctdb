@@ -20,7 +20,8 @@ This plugin runs `ctdb status` and `ctdb ip all` locally on each node and report
 
 ## Screenshots
 
-_WIP_
+### Example Services List
+![CTDB Services](docs/images/example_ctdb_services.png)
 
 ## How it works
 
